@@ -157,10 +157,16 @@ class ScannetDatasetWholeScene():
                 label_batch = labels[point_idxs].astype(int)
                 batch_weight = self.labelweights[label_batch]
 
-                data_room = np.vstack([data_room, data_batch]) if data_room.size else data_batch
-                label_room = np.hstack([label_room, label_batch]) if label_room.size else label_batch
-                sample_weight = np.hstack([sample_weight, batch_weight]) if label_room.size else batch_weight
-                index_room = np.hstack([index_room, point_idxs]) if index_room.size else point_idxs
+                data_room += [data_batch]
+                label_room += [label_batch]
+                sample_weight += [batch_weight]
+                index_room += [point_idxs]
+
+        data_room = np.vstack(data_room)
+        label_room = np.hstack(label_room)
+        sample_weight = np.hstack(sample_weight)
+        index_room = np.hstack(index_room)
+
         data_room = data_room.reshape((-1, self.block_points, data_room.shape[1]))
         label_room = label_room.reshape((-1, self.block_points))
         sample_weight = sample_weight.reshape((-1, self.block_points))
