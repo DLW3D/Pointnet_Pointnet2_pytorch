@@ -103,7 +103,10 @@ def query_ball_point(radius, nsample, xyz, new_xyz):
     group_idx = group_idx.sort(dim=-1)[0][:, :, :nsample]
     group_first = group_idx[:, :, 0].view(B, S, 1).repeat([1, 1, nsample])
     mask = group_idx == N
+    mask[:, :, 0] = False     # 避免由于精度问题造成索引溢出
     group_idx[mask] = group_first[mask]
+    if group_idx.max() > 4095:
+        print('Debug:', group_idx.max(), group_idx)     # idx==4096
     return group_idx
 
 
